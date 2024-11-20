@@ -53,29 +53,20 @@
         const apiKey = 'a1225855-882b-429b-896c-b49424ed66fc'; // API Key شما
 
         async function fetchCryptoData() {
-            const url = 'https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest?start=1&limit=5&convert=USD';
-            const options = {
-                method: 'GET',
-                headers: {
-                    'X-CMC_PRO_API_KEY': apiKey,
-                    'Accept': 'application/json'
-                }
-            };
-
+            const proxyUrl = 'https://cors-anywhere.herokuapp.com/';  // پروکسی
+            const url = proxyUrl + `https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest?CMC_PRO_API_KEY=${apiKey}&start=1&limit=5&convert=USD`; // درخواست با پروکسی
+            
             try {
-                const response = await fetch(url, options);
-                if (!response.ok) {
-                    throw new Error(`HTTP error! Status: ${response.status}`);
-                }
+                const response = await fetch(url);
                 const data = await response.json();
-
+                
                 if (data.status.error_code === 0) {
-                    displayCryptoData(data.data);
+                    displayCryptoData(data.data); // نمایش داده‌ها
                 } else {
                     document.getElementById('errorMessage').textContent = `Error: ${data.status.error_message}`;
                 }
             } catch (error) {
-                document.getElementById('errorMessage').textContent = 'Error fetching data: ' + error.message;
+                document.getElementById('errorMessage').textContent = 'Error fetching data: ' + error;
             }
         }
 
@@ -91,9 +82,9 @@
                 const price = crypto.quote.USD.price.toFixed(2);
                 const symbol = crypto.symbol;
 
-                cryptoDiv.innerHTML = `
-                    <p><strong>${name} (${symbol})</strong></p>
-                    <p>Price: $${price}</p>
+                cryptoDiv.innerHTML = ` 
+                    <p><strong>${name} (${symbol})</strong></p> 
+                    <p>Price: $${price}</p> 
                 `;
 
                 cryptoDataDiv.appendChild(cryptoDiv);
